@@ -1,0 +1,65 @@
+EXPERT MÉCA PRO — GUIDE POUR CRÉER L'APK
+==========================================
+
+CONTENU DE CE DOSSIER (ne rien renommer ni déplacer hors du dossier)
+----------------------------------------------------------------------
+- index.html              → l'application
+- manifest.json            → carte d'identité de l'app (nom, icône, couleurs)
+- sw.js                    → permet le fonctionnement hors-ligne
+- icon-192.png              → icône
+- icon-512.png              → icône
+- icon-maskable-512.png     → icône (format Android adaptatif)
+
+
+ÉTAPE 1 : METTRE L'APPLICATION EN LIGNE (obligatoire)
+----------------------------------------------------------------------
+PWABuilder a besoin d'une adresse internet (URL), pas d'un fichier.
+Méthode la plus simple, SANS COMPTE :
+
+1. Sur ton téléphone ou ordinateur, ouvre un navigateur
+2. Va sur : https://app.netlify.com/drop
+3. Glisse ICI TOUS LES FICHIERS DE CE DOSSIER (les 6 fichiers,
+   pas le dossier zippé, pas un fichier à la fois — sélectionne-les
+   tous puis glisse-les ensemble)
+4. Netlify affiche une adresse du type :
+   https://un-nom-au-hasard.netlify.app
+5. Ouvre cette adresse dans le navigateur pour vérifier que
+   l'application s'affiche correctement (le titre "Expert Méca Pro"
+   doit apparaître, pas une erreur, pas une demande de mot de passe)
+
+   ⚠️ Si une page demande un mot de passe : tu as utilisé un compte
+   Netlify existant avec une protection activée. Utilise bien le lien
+   "Drop" ci-dessus en navigation privée, sans te connecter.
+
+
+ÉTAPE 2 : GÉNÉRER L'APK AVEC PWABUILDER
+----------------------------------------------------------------------
+1. Va sur : https://www.pwabuilder.com
+2. Colle l'adresse Netlify obtenue à l'étape 1
+3. Clique sur "Start"
+4. Attends l'analyse (PWABuilder doit afficher des coches vertes
+   pour "Manifest" et "Service Worker")
+5. Clique sur l'onglet "Android"
+6. Clique sur "Generate Package" (laisse les options par défaut)
+7. Télécharge le fichier .apk généré
+
+
+ÉTAPE 3 : INSTALLER L'APK SUR TON TÉLÉPHONE
+----------------------------------------------------------------------
+1. Transfère le fichier .apk sur ton téléphone Android (ou
+   télécharge-le directement depuis le téléphone)
+2. Ouvre le fichier .apk depuis "Mes fichiers"
+3. Android demandera d'autoriser "Installer depuis cette source" :
+   accepte (uniquement pour cette installation)
+4. L'application "Méca Pro" apparaît dans ton menu d'applications
+
+
+EN CAS DE PROBLÈME
+----------------------------------------------------------------------
+- Page blanche / erreur sur Netlify → vérifie que index.html a bien
+  été inclus dans le dépôt de fichiers
+- PWABuilder ne trouve pas le Service Worker → attends 1 minute après
+  la mise en ligne sur Netlify puis recommence l'analyse
+- "App not installed" sur Android → active dans les réglages Android
+  l'option "Sources inconnues" pour l'application utilisée pour
+  ouvrir le fichier (Fichiers, Chrome, etc.)

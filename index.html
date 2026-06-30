@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Expert Méca Pro</title>
+<meta name="description" content="Fiches techniques moteur détaillées : huile, distribution, couples de serrage, liquide de refroidissement.">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Méca Pro">
+<meta name="mobile-web-app-capable" content="yes">
+<style>
+  :root {
+    --accent: #f59e0b;
+    --bg: #0a0a0a;
+    --card: #1a1a1a;
+    --line: #2a2a2a;
+    --text-dim: #888;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 16px;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+    min-height: 100vh;
+  }
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4em;
+    margin: 4px 0 16px;
+  }
+  .search-wrap { position: relative; margin-bottom: 12px; }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    opacity: 0.45; pointer-events: none; font-size: 1.1em;
+  }
+  #q {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #161616;
+    color: #fff;
+    font-size: 16px;
+  }
+  #q:focus { outline: none; border-color: var(--accent); }
+  .chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: 0 0 auto;
+    background: #161616;
+    color: #ccc;
+    border: 1px solid var(--line);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .chip.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .count { color: var(--text-dim); font-size: 0.8em; margin: 2px 2px 14px; }
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--accent);
+  }
+  .titre-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+  .titre { color: var(--accent); font-weight: 700; font-size: 1.15em; }
+  .sous-titre { color: #999; font-size: 0.8em; margin-bottom: 12px; }
+  .badge {
+    flex: 0 0 auto;
+    background: #2a2a2a; color: #aaa;
+    font-size: 0.7em; padding: 4px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.92em; margin-bottom: 10px; }
+  .item { display: flex; align-items: flex-start; gap: 8px; }
+  .item .ic { font-size: 1.1em; line-height: 1.3; }
+  .item .txt { display: flex; flex-direction: column; min-width: 0; }
+  .label { color: var(--text-dim); font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.03em; }
+  .val { font-weight: 600; word-break: break-word; }
+  .note {
+    color: #ccc; font-size: 0.85em; display: flex; gap: 8px;
+    margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px;
+  }
+  .note .ic { flex-shrink: 0; }
+  .empty { color: #666; text-align: center; padding: 50px 0; }
+  footer { text-align: center; color: #444; font-size: 0.75em; margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<h1>🛠️ Expert Méca Pro</h1>
+
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input id="q" type="text" placeholder="Rechercher modèle, moteur, marque...">
+</div>
+
+<div class="chips" id="chips"></div>
+<div class="count" id="count"></div>
+<div id="resultats"></div>
+<footer>Expert Méca Pro · données indicatives, vérifier la documentation constructeur</footer>
+
+<script>
+"use strict";
+
+const DB = [
+  { marque: "Peugeot", modele: "208", annees: "2019-2024", moteur: "1.2 PureTech", carburant: "Essence", puissance: "75-130 ch", huile: "3.5L (0W30)", distri: "100 000 km / 5 ans", ldr: "5.5L", vidange: "35 Nm", culasse: "20 Nm + 2x90°", bougies: "20 Nm", note: "Courroie de distribution humide (bain d'huile) : vérifier l'état de la crépine régulièrement." },
+  { marque: "Peugeot", modele: "308", annees: "2013-2021", moteur: "1.6 BlueHDi", carburant: "Diesel", puissance: "100-130 ch", huile: "4.3L (5W30)", distri: "200 000 km / 10 ans", ldr: "6.2L", vidange: "30 Nm", culasse: "Hydraulique auto-tendeur", bougies: "N/A", note: "Surveiller le FAP et la vanne EGR, encrassement fréquent en usage urbain." },
+  { marque: "Renault", modele: "Clio 4", annees: "2012-2019", moteur: "1.5 dCi", carburant: "Diesel", puissance: "75-110 ch", huile: "4.5L (5W30)", distri: "150 000 km / 7 ans", ldr: "6.0L", vidange: "25 Nm", culasse: "25 Nm + 110°", bougies: "N/A", note: "Capteur PMH (point mort haut) fragile, panne fréquente à froid." },
+  { marque: "Renault", modele: "Mégane 3", annees: "2008-2016", moteur: "1.6 16V", carburant: "Essence", puissance: "110 ch", huile: "4.5L (5W40)", distri: "Chaîne (à vie)", ldr: "6.5L", vidange: "20 Nm", culasse: "20 Nm + 90° + 90°", bougies: "25 Nm", note: "Chaîne silencieuse, mais tendeur hydraulique parfois bruyant à froid." },
+  { marque: "Citroën", modele: "C3", annees: "2016-2023", moteur: "1.4 HDi", carburant: "Diesel", puissance: "75-95 ch", huile: "3.8L (5W30)", distri: "240 000 km / 10 ans", ldr: "6.5L", vidange: "35 Nm", culasse: "Auto-tendeur", bougies: "N/A", note: "Surveiller les joints d'injecteurs, fuites de gasoil possibles." },
+  { marque: "Citroën", modele: "C4 Picasso", annees: "2013-2018", moteur: "1.6 THP", carburant: "Essence", puissance: "155 ch", huile: "4.25L (5W30)", distri: "Chaîne", ldr: "7.0L", vidange: "20 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Risque de distension de chaîne après 100 000 km : écouter un cliquetis au démarrage." },
+  { marque: "Volkswagen", modele: "Golf 7", annees: "2012-2020", moteur: "1.6 TDI", carburant: "Diesel", puissance: "90-110 ch", huile: "4.3L (5W30 504/507)", distri: "Chaîne", ldr: "6.0L", vidange: "30 Nm", culasse: "Hydraulique", bougies: "N/A", note: "Huile homologuée VW 504/507 obligatoire, sous peine de boucher le FAP." },
+  { marque: "Volkswagen", modele: "Polo", annees: "2017-2023", moteur: "1.0 TSI", carburant: "Essence", puissance: "95-115 ch", huile: "3.6L (5W40 502)", distri: "Chaîne", ldr: "5.0L", vidange: "20 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Tendeur de chaîne sensible, surveiller un cliquetis dès 60 000 km." },
+  { marque: "Dacia", modele: "Sandero", annees: "2012-2020", moteur: "0.9 TCe", carburant: "Essence", puissance: "90 ch", huile: "4.0L (5W30)", distri: "Courroie 100 000 km", ldr: "5.0L", vidange: "25 Nm", culasse: "25 Nm + 110°", bougies: "20 Nm", note: "Mécanique Renault simplifiée, fiable, entretien économique." },
+  { marque: "Dacia", modele: "Duster", annees: "2018-2024", moteur: "1.3 TCe", carburant: "Essence", puissance: "130-150 ch", huile: "5.3L (5W30)", distri: "Chaîne", ldr: "7.5L", vidange: "20 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Moteur Renault/Mercedes, respecter strictement l'intervalle de vidange." },
+  { marque: "Toyota", modele: "Yaris", annees: "2014-2020", moteur: "1.0 VVT-i", carburant: "Essence", puissance: "69 ch", huile: "3.7L (0W20)", distri: "Chaîne", ldr: "4.5L", vidange: "25 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Très fiable, faible consommation d'huile, intervalle de vidange long." },
+  { marque: "Toyota", modele: "Corolla", annees: "2019-2024", moteur: "1.8 Hybride", carburant: "Hybride", puissance: "122 ch", huile: "4.0L (0W16/0W20)", distri: "Chaîne", ldr: "6.0L + circuit hybride", vidange: "25 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Ne jamais utiliser une huile non préconisée Toyota." },
+  { marque: "Ford", modele: "Fiesta", annees: "2017-2023", moteur: "1.0 EcoBoost", carburant: "Essence", puissance: "100-125 ch", huile: "4.1L (5W20/5W30)", distri: "Courroie immergée", ldr: "6.0L", vidange: "20 Nm", culasse: "Hydraulique", bougies: "25 Nm", note: "Courroie immergée dans l'huile : remplacement coûteux mais long intervalle." },
+  { marque: "Ford", modele: "Focus 3", annees: "2011-2018", moteur: "1.6 TDCi", carburant: "Diesel", puissance: "95-115 ch", huile: "4.5L (5W30)", distri: "Courroie 160 000 km", ldr: "6.5L", vidange: "28 Nm", culasse: "Auto-tendeur", bougies: "N/A", note: "Vérifier le double volant moteur (DVM), usure fréquente après 150 000 km." },
+  { marque: "Opel", modele: "Corsa E", annees: "2014-2019", moteur: "1.3 CDTI", carburant: "Diesel", puissance: "75-95 ch", huile: "4.3L (5W30)", distri: "Courroie 160 000 km", ldr: "5.8L", vidange: "25 Nm", culasse: "Auto-tendeur", bougies: "N/A", note: "Moteur partagé PSA/GM, mêmes points de vigilance EGR/FAP." },
+  { marque: "BMW", modele: "Série 1", annees: "2011-2019", moteur: "2.0 116d", carburant: "Diesel", puissance: "116 ch", huile: "5.5L (5W30 LL04)", distri: "Chaîne", ldr: "7.0L", vidange: "25 Nm", culasse: "Hydraulique", bougies: "N/A", note: "Huile longue durée LL04 obligatoire, surveiller le filtre à particules en ville." },
+];
+
+const ICONS = { carburant: "⛽", puissance: "💪", huile: "🛢️", distri: "⚙️", ldr: "❄️", vidange: "🔩", culasse: "🔧", bougies: "⚡" };
+const LABELS = { carburant: "Carburant", puissance: "Puissance", huile: "Huile moteur", distri: "Distribution", ldr: "Liquide refroid.", vidange: "Bouchon vidange", culasse: "Couple culasse", bougies: "Bougies" };
+const FIELDS = Object.keys(ICONS);
+const MARQUES = ["Tous", ...new Set(DB.map(v => v.marque))];
+
+let activeChip = "Tous";
+let searchVal = "";
+
+const elChips = document.getElementById("chips");
+const elCount = document.getElementById("count");
+const elResults = document.getElementById("resultats");
+const elSearch = document.getElementById("q");
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function renderChips() {
+  elChips.innerHTML = MARQUES.map(m =>
+    `<div class="chip${m === activeChip ? " active" : ""}" data-marque="${escapeHtml(m)}">${escapeHtml(m)}</div>`
+  ).join("");
+}
+
+function renderResults() {
+  const val = searchVal.trim().toLowerCase();
+  const res = DB.filter(v => {
+    const haystack = (v.marque + " " + v.modele + " " + v.moteur).toLowerCase();
+    const matchText = haystack.includes(val);
+    const matchChip = activeChip === "Tous" || v.marque === activeChip;
+    return matchText && matchChip;
+  });
+
+  elCount.textContent = res.length + " véhicule(s) trouvé(s)";
+
+  if (res.length === 0) {
+    elResults.innerHTML = '<div class="empty">🔍 Aucun résultat</div>';
+    return;
+  }
+
+  elResults.innerHTML = res.map(v => `
+    <div class="card">
+      <div class="titre-row">
+        <div>
+          <div class="titre">${escapeHtml(v.marque)} ${escapeHtml(v.modele)}</div>
+          <div class="sous-titre">${escapeHtml(v.moteur)} · ${escapeHtml(v.annees)}</div>
+        </div>
+        <span class="badge">${escapeHtml(v.annees.split("-")[0])}</span>
+      </div>
+      <div class="grid">
+        ${FIELDS.map(f => `
+          <div class="item">
+            <span class="ic">${ICONS[f]}</span>
+            <span class="txt">
+              <span class="label">${LABELS[f]}</span>
+              <span class="val">${escapeHtml(v[f])}</span>
+            </span>
+          </div>
+        `).join("")}
+      </div>
+      <div class="note"><span class="ic">📌</span><span>${escapeHtml(v.note)}</span></div>
+    </div>
+  `).join("");
+}
+
+elChips.addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  activeChip = chip.dataset.marque;
+  renderChips();
+  renderResults();
+});
+
+elSearch.addEventListener("input", (e) => {
+  searchVal = e.target.value;
+  renderResults();
+});
+
+renderChips();
+renderResults();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
